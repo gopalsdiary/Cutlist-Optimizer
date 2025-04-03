@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CutList Optimizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>CutList Optimizer</h1>
+                <span class="version">v1.0</span>
+            </div>
+            <div class="header-actions">
+                <button id="calculate-btn"><span class="material-icons">play_arrow</span> Calculate</button>
+                <button id="save-btn"><span class="material-icons">save</span> Save</button>
+                <button id="load-btn"><span class="material-icons">folder_open</span> Load</button>
+                <button id="settings-btn"><span class="material-icons">settings</span> Options</button>
+                <button id="save-pdf-btn"><span class="material-icons">picture_as_pdf</span> Save as PDF</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="panels">
+                <div class="panel input-panel">
+                    <h2><span class="material-icons">dashboard</span> Input Data</h2>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="parts">Parts</button>
+                        <button class="tab-btn" data-tab="stock">Stock Sheets</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="parts-tab">
+                        <h3>Parts List</h3>
+                        <div class="table-container">
+                            <table id="parts-table">
+                                <thead>
+                                    <tr>
+                                        <th>Label</th>
+                                        <th>Length</th>
+                                        <th>Width</th>
+                                        <th>Quantity</th>
+                                        <th>Material</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Parts will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="add-part-btn"><span class="material-icons">add</span> Add Part</button>
+                    </div>
+
+                    <div class="tab-content" id="stock-tab">
+                        <h3>Stock Sheets</h3>
+                        <div class="table-container">
+                            <table id="stock-table">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Length</th>
+                                        <th>Width</th>
+                                        <th>Quantity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Stock sheets will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="add-stock-btn"><span class="material-icons">add</span> Add Stock Sheet</button>
+                    </div>
+                </div>
+
+                <div class="panel results-panel">
+                    <h2><span class="material-icons">view_carousel</span> Cutting Diagrams</h2>
+                    <div id="cutting-diagrams">
+                        <!-- Cutting diagrams will be rendered here -->
+                        <div class="empty-state">
+                            <span class="material-icons">info</span>
+                            <p>Click "Calculate" to generate cutting diagrams</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel statistics-panel">
+                <h2><span class="material-icons">assessment</span> Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Sheets</div>
+                        <div class="stat-value" id="total-sheets">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Material Usage</div>
+                        <div class="stat-value" id="material-usage">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Waste</div>
+                        <div class="stat-value" id="waste-area">0 sq units</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Cuts</div>
+                        <div class="stat-value" id="total-cuts">0</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for adding/editing parts -->
+    <div class="modal" id="part-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="part-modal-title">Add New Part</h2>
+            <form id="part-form">
+                <input type="hidden" id="part-id">
+                <div class="form-group">
+                    <label for="part-label">Label:</label>
+                    <input type="text" id="part-label" required>
+                </div>
+                <div class="form-group">
+                    <label for="part-length">Length (in):</label>
+                    <input type="number" id="part-length" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="part-width">Width (in):</label>
+                    <input type="number" id="part-width" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="part-quantity">Quantity:</label>
+                    <input type="number" id="part-quantity" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="part-material">Material:</label>
+                    <select id="part-material">
+                        <option value="plywood">Plywood</option>
+                        <option value="mdf">MDF</option>
+                        <option value="particle-board">Particle Board</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Save</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing stock sheets -->
+    <div class="modal" id="stock-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="stock-modal-title">Add New Stock Sheet</h2>
+            <form id="stock-form">
+                <input type="hidden" id="stock-id">
+                <div class="form-group">
+                    <label for="stock-material">Material:</label>
+                    <select id="stock-material">
+                        <option value="plywood">Plywood</option>
+                        <option value="mdf">MDF</option>
+                        <option value="particle-board">Particle Board</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="stock-length">Length (in):</label>
+                    <input type="number" id="stock-length" min="1" value="2440" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock-width">Width (in):</label>
+                    <input type="number" id="stock-width" min="1" value="1220" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock-quantity">Quantity:</label>
+                    <input type="number" id="stock-quantity" min="1" value="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Save</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Options Modal -->
+    <div class="modal" id="options-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Cutting Options</h2>
+            <form id="options-form">
+                <div class="form-group">
+                    <label for="kerf-width">Saw Kerf Width (mm):</label>
+                    <input type="number" id="kerf-width" min="0" step="0.1" value="3.5">
+                </div>
+                <div class="form-group">
+                    <label for="optimization-priority">Optimization Priority:</label>
+                    <select id="optimization-priority">
+                        <option value="material">Minimize Material Use</option>
+                        <option value="cuts">Minimize Number of Cuts</option>
+                    </select>
+                </div>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="allow-rotation" checked>
+                    <label for="allow-rotation">Allow Part Rotation</label>
+                </div>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="consider-grain">
+                    <label for="consider-grain">Consider Grain Direction</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Apply</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</body>
+</html>

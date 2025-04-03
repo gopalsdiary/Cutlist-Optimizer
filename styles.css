@@ -1,0 +1,412 @@
+:root {
+    --primary-color: #2196F3;
+    --primary-dark: #1976D2;
+    --primary-light: #BBDEFB;
+    --accent-color: #FF9800;
+    --text-color: #212121;
+    --secondary-text: #757575;
+    --divider-color: #BDBDBD;
+    --background-color: #F5F5F5;
+    --white: #FFFFFF;
+    --error-color: #F44336;
+    --success-color: #4CAF50;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: baseline;
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+.version {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    opacity: 0.8;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary-dark);
+    color: var(--white);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: var(--accent-color);
+}
+
+button .material-icons {
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
+}
+
+main {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.panels {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .panels {
+        flex-direction: column;
+    }
+}
+
+.panel {
+    background-color: var(--white);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.results-panel {
+    flex: 2;
+    min-width: 400px;
+}
+
+.statistics-panel {
+    flex: 0;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    color: var(--primary-dark);
+}
+
+h2 .material-icons {
+    margin-right: 0.5rem;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.tab-btn {
+    background-color: transparent;
+    color: var(--secondary-text);
+    border-radius: 0;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: 500;
+}
+
+.tab-content {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-text);
+}
+
+.table-container {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+th {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+
+tr:hover {
+    background-color: rgba(187, 222, 251, 0.2);
+}
+
+.cutting-diagram {
+    border: 1px solid var(--divider-color);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--white);
+}
+
+.diagram-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.diagram-canvas {
+    width: 100%;
+    height: 400px;
+    background-color: var(--background-color);
+    position: relative;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    background-color: var(--primary-light);
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-dark);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 10% auto;
+    padding: 1.5rem;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--divider-color);
+    border-radius: 4px;
+}
+
+.form-group.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.form-group.checkbox input {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.form-group.checkbox label {
+    margin-bottom: 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.cancel-btn {
+    background-color: var(--divider-color);
+    color: var(--text-color);
+}
+
+/* Cutting diagram visualization */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--secondary-text);
+    text-align: center;
+}
+
+.empty-state .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.sheet {
+    position: relative;
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--primary-dark);
+}
+
+.sheet-header {
+    background-color: var(--primary-light);
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sheet-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    height: 400px;
+}
+
+.part {
+    position: absolute;
+    background-color: rgba(255, 152, 0, 0.7);
+    border: 1px solid var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    overflow: hidden;
+    color: var(--text-color);
+}
+
+.cut-line {
+    position: absolute;
+    background-color: var(--error-color);
+    z-index: 10;
+}
+
+.cut-line.horizontal {
+    height: 2px;
+    width: 100%;
+}
+
+.cut-line.vertical {
+    width: 2px;
+    height: 100%;
+}
+
+/* Action buttons in tables */
+.action-btns {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.edit-btn, .delete-btn {
+    padding: 0.2rem;
+    min-width: 30px;
+}
+
+.edit-btn {
+    background-color: var(--primary-color);
+}
+
+.delete-btn {
+    background-color: var(--error-color);
+} 

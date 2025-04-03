@@ -1,7 +1,7 @@
 # CutList Optimizer
 
-A simple web-based tool to optimize cutting layouts for woodworking projects, similar to [cutlistoptimizer.com](https://www.cutlistoptimizer.com/).
-
+A simple web-based tool to optimize cutting layouts for woodworking projects.
+by #gopalsdiary
 ## Features
 
 - Add and manage parts with dimensions, quantities, and materials
@@ -19,25 +19,15 @@ A simple web-based tool to optimize cutting layouts for woodworking projects, si
 4. **Calculate**: Click the Calculate button to generate optimized cutting layouts.
 5. **Review Results**: View the cutting diagrams and statistics about material usage.
 
-## Getting Started
 
-### Running Locally
-
-1. Clone or download this repository
-2. Open the `index.html` file in your web browser
-
-No installation or server setup is required - this is a pure HTML/CSS/JavaScript application that runs entirely in your browser.
 
 ## Technical Details
-
 - Built with vanilla JavaScript, HTML, and CSS
 - Uses a greedy bin-packing algorithm for layout optimization
 - Saves projects to browser's localStorage
 
 ## License
-
 This project is open source and free to use.
 
 ## Acknowledgments
-
-Inspired by commercial applications like [cutlistoptimizer.com](https://www.cutlistoptimizer.com/) but created as a free, open-source alternative. 
+Gopals Diary created as a free, open-source alternative. 

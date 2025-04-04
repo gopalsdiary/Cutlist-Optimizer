@@ -346,49 +346,58 @@ input, select {
 
 .sheet {
     position: relative;
-    margin-bottom: 1.5rem;
-    border: 2px solid var(--primary-dark);
+    margin-bottom: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
 }
 
 .sheet-header {
-    background-color: var(--primary-light);
-    padding: 0.5rem;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: bold;
+    background-color: var(--primary-light);
+    padding: 0.5rem;
 }
 
 .sheet-container {
     position: relative;
     overflow: hidden;
-    background-color: #f9f9f9;
+    background-color: #f5f5dc;
+    border: 2px solid #000;
+    margin: 10px auto;
     height: 400px;
 }
 
 .part {
     position: absolute;
-    background-color: rgba(255, 152, 0, 0.7);
-    border: 1px solid var(--accent-color);
+    background-color: #e0e0e0;
+    border: 1px solid #333;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: 12px;
     overflow: hidden;
+    text-align: center;
     color: var(--text-color);
 }
 
 .cut-line {
     position: absolute;
-    background-color: var(--error-color);
+    background-color: #ff0000;
     z-index: 10;
 }
 
 .cut-line.horizontal {
-    height: 2px;
+    height: 3px;
     width: 100%;
 }
 
 .cut-line.vertical {
-    width: 2px;
+    width: 3px;
     height: 100%;
 }
 
@@ -409,4 +418,4 @@ input, select {
 
 .delete-btn {
     background-color: var(--error-color);
-} 
+}

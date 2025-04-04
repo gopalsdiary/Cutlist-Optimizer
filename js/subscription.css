@@ -1,0 +1,74 @@
+.plan-bold {
+    color: #263238
+}
+
+.plan-td-bold {
+    color: #263238
+}
+
+.plan-table-text {
+    color: #7986CB;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+.btn-subscribe {
+    color: #fff;
+    background-color: #90A4AE;
+    width: 96%;
+}
+
+.btn-subscribe:hover, .btn-subscribe:active, .btn-subscribe:visited {
+    color: #fff;
+    background-color: #AEBCC4 !important;
+}
+
+.btn-subscribe-back {
+    color: #5A7582;
+}
+
+.btn-subscribe-back:hover, .btn-subscribe-back:active, .btn-subscribe-back:visited {
+    color: #879AA4;
+}
+
+.gold-cell {
+    color: #8C7601 !important;
+    background-image: linear-gradient(to bottom right, #fff7d0, white);
+    border: 2px solid #ddd !important;
+}
+
+.silver-cell {
+    color: #696969 !important;
+    background-image: linear-gradient(to bottom right, #f3f3f3, white);
+    border: 2px solid #ddd !important;
+}
+
+.bronze-cell {
+    color: #654A06 !important;
+    background-image: linear-gradient(to bottom right, #f2e9d2, white);
+    border: 2px solid #ddd !important;
+}
+
+.free-cell {
+    color: #455A64;
+    background-image: linear-gradient(to bottom right, #fff, white);
+    border: 2px solid #ddd !important;
+}
+
+.subscription-table {
+    width: 100%;
+}
+
+.subscription-table tr,.subscription-table td {
+    height: 40px;
+    text-align: center
+}
+
+.subscription-table th {
+    color: #455A64;
+}
+
+.subscription-table-spacer {
+    height: 360px;
+}
+

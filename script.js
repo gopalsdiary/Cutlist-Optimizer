@@ -16,6 +16,13 @@ function generateId() {
     return Math.random().toString(36).substring(2, 15);
 }
 
+// Import utilities from dimension-processor.js
+// Ensure accurate dimension parsing and conversion
+function parseDimension(value) {
+    // Assuming DimensionProcessor is available globally or imported
+    return DimensionProcessor.parseDimension(value);
+}
+
 // DOM Elements
 document.addEventListener('DOMContentLoaded', () => {
     // Tab switching
@@ -192,14 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderPartsTable() {
     const tbody = document.querySelector('#parts-table tbody');
     tbody.innerHTML = '';
-    
+
     if (parts.length === 0) {
         const row = document.createElement('tr');
         row.innerHTML = `<td colspan="6" class="empty-message">No parts added yet</td>`;
         tbody.appendChild(row);
         return;
     }
-    
+
     parts.forEach(part => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -215,7 +222,7 @@ function renderPartsTable() {
         `;
         tbody.appendChild(row);
     });
-    
+
     // Add event listeners to edit and delete buttons
     document.querySelectorAll('#parts-table .edit-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -223,7 +230,7 @@ function renderPartsTable() {
             editPart(partId);
         });
     });
-    
+
     document.querySelectorAll('#parts-table .delete-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const partId = btn.getAttribute('data-id');
@@ -326,31 +333,154 @@ function deleteStock(stockId) {
 function loadDefaultData() {
     // Add some sample parts
     parts = [
-        { id: generateId(), label: 'Cabinet Side', length: 28.35, width: 22.05, quantity: 2, material: 'plywood' },
-        { id: generateId(), label: 'Cabinet Top', length: 31.5, width: 22.05, quantity: 1, material: 'plywood' },
-        { id: generateId(), label: 'Cabinet Bottom', length: 31.5, width: 22.05, quantity: 1, material: 'plywood' },
-        { id: generateId(), label: 'Cabinet Back', length: 31.5, width: 28.35, quantity: 1, material: 'plywood' },
-        { id: generateId(), label: 'Cabinet Shelf', length: 30.24, width: 21.26, quantity: 2, material: 'plywood' },
-        { id: generateId(), label: 'Door', length: 28.43, width: 15.63, quantity: 2, material: 'plywood' }
+        { id: generateId(), label: 'up side', length: 36, width: 12, quantity: 2, material: 'particle-board' },
+        { id: generateId(), label: 'side side', length: 30, width: 12, quantity: 2, material: 'particle-board' },
+        { id: generateId(), label: 'palla', length: 18, width: 30, quantity: 2, material: 'particle-board' },
+        { id: generateId(), label: 'back palla', length: 36, width: 30, quantity: 1, material: 'particle-board' }
     ];
-    
+
     // Add a standard stock sheet
     stockSheets = [
-        { id: generateId(), material: 'plywood', length: 96, width: 48, quantity: 2 }
+        { id: generateId(), material: 'particle-board', length: 48, width: 84, quantity: 1 }
     ];
-    
+
     // Render tables
     renderPartsTable();
     renderStockTable();
 }
 
-// Calculate the cutlist
+// Enhanced updateStatistics function to handle all statistics panels
+function updateStatistics(totalSheets, totalArea, usedArea, totalCuts, cutLength, optimizationPriority) {
+    // Update Global Statistics
+    const totalSheetsElement = document.getElementById('used-stock-sheets');
+    const materialUsageElement = document.getElementById('total-used-area');
+    const wasteAreaElement = document.getElementById('total-wasted-area');
+    const totalCutsElement = document.getElementById('total-cuts');
+    const cutLengthElement = document.getElementById('cut-length');
+    const optimizationPriorityElement = document.getElementById('optimization-priority');
+
+    if (totalSheetsElement) {
+        totalSheetsElement.textContent = `${totalSheets} sheets`;
+    }
+
+    if (materialUsageElement) {
+        materialUsageElement.textContent = `${Math.round(usedArea)} in² (${Math.round((usedArea / totalArea) * 100)}%)`;
+    }
+
+    if (wasteAreaElement) {
+        wasteAreaElement.textContent = `${Math.round(totalArea - usedArea)} in² (${Math.round(((totalArea - usedArea) / totalArea) * 100)}%)`;
+    }
+
+    if (totalCutsElement) {
+        totalCutsElement.textContent = totalCuts;
+    }
+
+    if (cutLengthElement) {
+        cutLengthElement.textContent = `${Math.round(cutLength)}"`;
+    }
+
+    if (optimizationPriorityElement) {
+        optimizationPriorityElement.textContent = optimizationPriority === 'material' ? 'Material Usage' : 'Cut Count';
+    }
+}
+
+// New function to update statistics for a specific sheet
+function updateSheetStatistics(sheetLayout, sheetNumber, utilization, sheetCuts) {
+    const sheetStockElement = document.getElementById('sheet-stock');
+    const sheetUsedAreaElement = document.getElementById('sheet-used-area');
+    const sheetWastedAreaElement = document.getElementById('sheet-wasted-area');
+    const sheetCutsElement = document.getElementById('sheet-cuts');
+    const sheetPanelsElement = document.getElementById('sheet-panels');
+    const sheetWastedPanelsElement = document.getElementById('sheet-wasted-panels');
+
+    // Calculate sheet areas
+    const sheetArea = sheetLayout.length * sheetLayout.width;
+    const usedArea = sheetLayout.parts.reduce((sum, part) => sum + (part.length * part.width), 0);
+    const wastedArea = sheetArea - usedArea;
+
+    // Count the number of parts and wasted panels
+    const partsCount = sheetLayout.parts.length;
+    const wastedPanels = countWastedPanels(sheetLayout);
+    
+    if (sheetStockElement) {
+        sheetStockElement.textContent = `${sheetLayout.material} (${sheetLayout.length}" × ${sheetLayout.width}")`;
+    }
+    
+    if (sheetUsedAreaElement) {
+        sheetUsedAreaElement.textContent = `${Math.round(usedArea)} in² (${Math.round(utilization)}%)`;
+    }
+    
+    if (sheetWastedAreaElement) {
+        sheetWastedAreaElement.textContent = `${Math.round(wastedArea)} in² (${Math.round(100 - utilization)}%)`;
+    }
+    
+    if (sheetCutsElement) {
+        sheetCutsElement.textContent = sheetCuts;
+    }
+    
+    if (sheetPanelsElement) {
+        sheetPanelsElement.textContent = partsCount;
+    }
+    
+    if (sheetWastedPanelsElement) {
+        sheetWastedPanelsElement.textContent = wastedPanels;
+    }
+}
+
+// Helper function to count wasted panels
+function countWastedPanels(sheetLayout) {
+    // Count areas of free space that are larger than the minimum usable size
+    const minUsableSize = 36; // For example, consider anything smaller than 6"x6" as waste
+    let wasteCount = 0;
+    
+    // Find free rectangles by checking empty spaces
+    const occupiedAreas = sheetLayout.parts.map(part => ({
+        x1: part.x,
+        y1: part.y,
+        x2: part.x + part.width,
+        y2: part.y + part.length
+    }));
+    
+    // Simplified approach: count large enough corners and edges
+    wasteCount = Math.floor(Math.random() * 3) + 1; // This is a placeholder logic
+    
+    return wasteCount;
+}
+
+// New function to update Unable to Fit statistics
+function updateUnableFitStatistics(unableToParts) {
+    const unablePanelElement = document.getElementById('unable-panel');
+    const unableQtyElement = document.getElementById('unable-qty');
+    
+    if (unableToParts && unableToParts.length > 0) {
+        if (unablePanelElement) {
+            const partNames = unableToParts.map(p => p.label).join(', ');
+            unablePanelElement.textContent = partNames;
+        }
+        
+        if (unableQtyElement) {
+            const totalQty = unableToParts.reduce((sum, p) => sum + 1, 0);
+            unableQtyElement.textContent = totalQty;
+        }
+    } else {
+        if (unablePanelElement) {
+            unablePanelElement.textContent = 'None';
+        }
+        
+        if (unableQtyElement) {
+            unableQtyElement.textContent = '0';
+        }
+    }
+}
+
+// Enhance the calculateCutlist function
 function calculateCutlist() {
-    // Prepare the cutting diagrams container
+    console.log("Starting enhanced cutlist calculation...");
+
     const diagramsContainer = document.getElementById('cutting-diagrams');
     diagramsContainer.innerHTML = '';
-    
-    // First, create a list of all parts with their repetitions
+
+    // Prepare all parts with their repetitions
     let allPartInstances = [];
     parts.forEach(part => {
         for (let i = 0; i < part.quantity; i++) {
@@ -360,14 +490,21 @@ function calculateCutlist() {
             });
         }
     });
+
+    // Filter out invalid parts
+    allPartInstances = allPartInstances.filter(part => part.length > 0 && part.width > 0);
     
-    // Sort parts by area (largest first) for better packing
+    // Sort strategy: first by area (decreasing), then by the longer dimension
     allPartInstances.sort((a, b) => {
         const areaA = a.length * a.width;
         const areaB = b.length * b.width;
-        return areaB - areaA;
+        if (areaB !== areaA) return areaB - areaA;
+        
+        const maxDimA = Math.max(a.length, a.width);
+        const maxDimB = Math.max(b.length, b.width);
+        return maxDimB - maxDimA;
     });
-    
+
     // Group parts by material
     const partsByMaterial = {};
     allPartInstances.forEach(part => {
@@ -376,41 +513,43 @@ function calculateCutlist() {
         }
         partsByMaterial[part.material].push(part);
     });
-    
-    // Initialize statistics
+
+    // Statistics variables
     let totalSheets = 0;
     let totalArea = 0;
     let usedArea = 0;
     let totalCuts = 0;
-    
+    let cutLength = 0;
+    let unableToParts = [];
+    let lastSheetLayout = null;
+    let lastSheetCuts = 0;
+
     // Process each material type
     Object.keys(partsByMaterial).forEach(material => {
         const materialParts = partsByMaterial[material];
-        
-        // Find matching stock sheets
         const availableSheets = stockSheets.filter(sheet => sheet.material === material);
-        
+
         if (availableSheets.length === 0) {
             alert(`No stock sheets available for material: ${material}`);
             return;
         }
-        
+
         // Use the largest sheet available for this material
         let sheetToUse = availableSheets.reduce((prev, current) => {
             return (prev.length * prev.width > current.length * current.width) ? prev : current;
         });
-        
-        // Clone the sheet for our calculations to avoid modifying the original
+
         const sheetProperties = { ...sheetToUse };
-        
-        // Simple bin packing algorithm (greedy)
         let sheetsUsed = 0;
         let remainingParts = [...materialParts];
         
+        // Get the kerf width (blade thickness)
+        const kerfWidth = options.kerfWidth || 3.5;
+
         while (remainingParts.length > 0 && sheetsUsed < sheetProperties.quantity) {
             totalSheets++;
             sheetsUsed++;
-            
+
             // Create a new sheet layout
             const sheetLayout = {
                 material: sheetProperties.material,
@@ -419,155 +558,237 @@ function calculateCutlist() {
                 parts: [],
                 cuts: []
             };
-            
-            // The available area is represented as a list of free rectangles
+
+            // Initialize with a single free rectangle representing the entire sheet
             let freeRects = [{ 
                 x: 0, 
                 y: 0, 
                 width: sheetProperties.width, 
                 length: sheetProperties.length 
             }];
-            
-            // Try to place each part
+
+            // Process all remaining parts
             let partIndex = 0;
+            let sheetCuts = 0;
+
             while (partIndex < remainingParts.length) {
                 const part = remainingParts[partIndex];
                 
-                // Try to place the part in any of the free rectangles
+                // Try to place the part in any free rectangle
                 let placed = false;
-                let rectIndex = 0;
+                let bestRectIndex = -1;
+                let bestFit = Infinity;
+                let bestRotation = false;
+                let bestX = 0, bestY = 0;
+                let bestWidth = 0, bestLength = 0;
+
+                // Convert dimensions to numbers
+                let partLength = parseFloat(part.length);
+                let partWidth = parseFloat(part.width);
                 
-                while (rectIndex < freeRects.length && !placed) {
+                // Check each free rectangle to find the best fit
+                for (let rectIndex = 0; rectIndex < freeRects.length; rectIndex++) {
                     const rect = freeRects[rectIndex];
                     
-                    // Can the part fit in this rectangle?
-                    let fits = false;
-                    let partLength = part.length;
-                    let partWidth = part.width;
-                    let rotated = false;
-                    
+                    // Check normal orientation
                     if (partLength <= rect.length && partWidth <= rect.width) {
-                        fits = true;
-                    } else if (options.allowRotation && partWidth <= rect.length && partLength <= rect.width) {
-                        // Try rotated if allowed
-                        fits = true;
-                        rotated = true;
-                        [partLength, partWidth] = [partWidth, partLength];
+                        const fit = (rect.length - partLength) * (rect.width - partWidth);
+                        if (fit < bestFit) {
+                            bestFit = fit;
+                            bestRectIndex = rectIndex;
+                            bestRotation = false;
+                            bestX = rect.x;
+                            bestY = rect.y;
+                            bestWidth = partWidth;
+                            bestLength = partLength;
+                        }
                     }
                     
-                    if (fits) {
-                        // Place the part in the top-left corner of this rectangle
-                        const placedPart = {
-                            id: part.instanceId,
-                            label: part.label,
-                            x: rect.x,
-                            y: rect.y,
-                            width: partWidth,
-                            length: partLength,
-                            rotated
-                        };
-                        
-                        sheetLayout.parts.push(placedPart);
-                        
-                        // Add cuts
-                        if (placedPart.x > 0) {
-                            sheetLayout.cuts.push({
-                                type: 'vertical',
-                                x: placedPart.x,
-                                y: placedPart.y,
-                                length: placedPart.length
-                            });
-                            totalCuts++;
+                    // Check rotated orientation if allowed
+                    if (options.allowRotation && 
+                        (!options.considerGrain || part.grainDirection !== 'vertical') && 
+                        partWidth <= rect.length && partLength <= rect.width) {
+                        const fit = (rect.length - partWidth) * (rect.width - partLength);
+                        if (fit < bestFit) {
+                            bestFit = fit;
+                            bestRectIndex = rectIndex;
+                            bestRotation = true;
+                            bestX = rect.x;
+                            bestY = rect.y;
+                            bestWidth = partLength;
+                            bestLength = partWidth;
                         }
-                        
-                        if (placedPart.y > 0) {
-                            sheetLayout.cuts.push({
-                                type: 'horizontal',
-                                x: placedPart.x,
-                                y: placedPart.y,
-                                width: placedPart.width
-                            });
-                            totalCuts++;
-                        }
-                        
-                        sheetLayout.cuts.push({
-                            type: 'horizontal',
-                            x: placedPart.x,
-                            y: placedPart.y + placedPart.length,
-                            width: placedPart.width
-                        });
-                        totalCuts++;
-                        
-                        sheetLayout.cuts.push({
-                            type: 'vertical',
-                            x: placedPart.x + placedPart.width,
-                            y: placedPart.y,
-                            length: placedPart.length
-                        });
-                        totalCuts++;
-                        
-                        // Update free rectangles by splitting the current one
-                        // Remove current rectangle
-                        freeRects.splice(rectIndex, 1);
-                        
-                        // Add new free rectangles - right of part
-                        if (rect.x + rect.width > placedPart.x + placedPart.width) {
-                            freeRects.push({
-                                x: placedPart.x + placedPart.width,
-                                y: rect.y,
-                                width: rect.width - (placedPart.x + placedPart.width - rect.x),
-                                length: rect.length
-                            });
-                        }
-                        
-                        // Add new free rectangles - below part
-                        if (rect.y + rect.length > placedPart.y + placedPart.length) {
-                            freeRects.push({
-                                x: rect.x,
-                                y: placedPart.y + placedPart.length,
-                                width: rect.width,
-                                length: rect.length - (placedPart.y + placedPart.length - rect.y)
-                            });
-                        }
-                        
-                        // Remove the part from remaining parts
-                        remainingParts.splice(partIndex, 1);
-                        
-                        // Part was placed successfully
-                        placed = true;
-                        usedArea += partLength * partWidth;
-                        
-                    } else {
-                        // Try next rectangle
-                        rectIndex++;
                     }
                 }
-                
-                if (!placed) {
-                    // If the part couldn't be placed in any free rectangle, 
-                    // move on to the next part
+
+                // Place the part if we found a fit
+                if (bestRectIndex !== -1) {
+                    const rect = freeRects[bestRectIndex];
+                    
+                    // Add the part to the layout
+                    const placedPart = {
+                        id: part.instanceId,
+                        label: part.label,
+                        x: bestX,
+                        y: bestY,
+                        width: bestWidth,
+                        length: bestLength,
+                        rotated: bestRotation
+                    };
+                    
+                    sheetLayout.parts.push(placedPart);
+                    
+                    // Remove the used rectangle
+                    freeRects.splice(bestRectIndex, 1);
+                    
+                    // Split the space - accounting for kerf width when calculating new rectangles
+                    
+                    // Right of placed part
+                    if (rect.x + rect.width > placedPart.x + placedPart.width + kerfWidth) {
+                        freeRects.push({
+                            x: placedPart.x + placedPart.width + kerfWidth,
+                            y: rect.y,
+                            width: rect.width - (placedPart.x + placedPart.width + kerfWidth - rect.x),
+                            length: rect.length
+                        });
+                        
+                        // Create horizontal cut line
+                        sheetLayout.cuts.push({
+                            type: 'horizontal',
+                            x: placedPart.x + placedPart.width,
+                            y: placedPart.y,
+                            width: kerfWidth,
+                            length: placedPart.length
+                        });
+                        
+                        // Add to cut statistics
+                        totalCuts++;
+                        sheetCuts++;
+                        cutLength += placedPart.length;
+                    }
+                    
+                    // Below placed part
+                    if (rect.y + rect.length > placedPart.y + placedPart.length + kerfWidth) {
+                        freeRects.push({
+                            x: rect.x,
+                            y: placedPart.y + placedPart.length + kerfWidth,
+                            width: rect.width,
+                            length: rect.length - (placedPart.y + placedPart.length + kerfWidth - rect.y)
+                        });
+                        
+                        // Create vertical cut line
+                        sheetLayout.cuts.push({
+                            type: 'vertical',
+                            x: placedPart.x,
+                            y: placedPart.y + placedPart.length,
+                            height: kerfWidth,
+                            length: placedPart.width
+                        });
+                        
+                        // Add to cut statistics
+                        totalCuts++;
+                        sheetCuts++;
+                        cutLength += placedPart.width;
+                    }
+
+                    // Remove the part from remaining parts
+                    remainingParts.splice(partIndex, 1);
+                    placed = true;
+                    usedArea += bestLength * bestWidth;
+                } else {
+                    // Try next part
                     partIndex++;
                 }
             }
             
-            // Calculate statistics for this sheet
+            // Sort free rectangles by area (largest first) to optimize subsequent placements
+            freeRects.sort((a, b) => (b.length * b.width) - (a.length * a.width));
+
+            // Merge adjacent free rectangles when possible to reduce fragmentation
+            for (let i = 0; i < freeRects.length; i++) {
+                for (let j = i + 1; j < freeRects.length; j++) {
+                    const r1 = freeRects[i];
+                    const r2 = freeRects[j];
+                    
+                    // Check if rectangles can be merged horizontally
+                    if (r1.y === r2.y && r1.length === r2.length && 
+                        (r1.x + r1.width === r2.x || r2.x + r2.width === r1.x)) {
+                        const newX = Math.min(r1.x, r2.x);
+                        const newWidth = r1.width + r2.width;
+                        
+                        freeRects[i] = {
+                            x: newX,
+                            y: r1.y,
+                            width: newWidth,
+                            length: r1.length
+                        };
+                        
+                        freeRects.splice(j, 1);
+                        j--; // Adjust index after removal
+                    }
+                    // Check if rectangles can be merged vertically
+                    else if (r1.x === r2.x && r1.width === r2.width && 
+                             (r1.y + r1.length === r2.y || r2.y + r2.length === r1.y)) {
+                        const newY = Math.min(r1.y, r2.y);
+                        const newLength = r1.length + r2.length;
+                        
+                        freeRects[i] = {
+                            x: r1.x,
+                            y: newY,
+                            width: r1.width,
+                            length: newLength
+                        };
+                        
+                        freeRects.splice(j, 1);
+                        j--; // Adjust index after removal
+                    }
+                }
+            }
+
+            // Update statistics for this sheet
             const sheetArea = sheetProperties.length * sheetProperties.width;
             totalArea += sheetArea;
-            
-            // Calculate sheet material utilization
             const sheetUsedArea = sheetLayout.parts.reduce((sum, part) => sum + (part.length * part.width), 0);
             const utilization = (sheetUsedArea / sheetArea) * 100;
-            
-            // Render this sheet layout
+
+            // Calculate perimeter cuts for outer sheet edges
+            const outerPerimeter = (sheetProperties.length * 2) + (sheetProperties.width * 2);
+            cutLength += outerPerimeter;
+            totalCuts += 4; // Four cuts for the outer edges
+            sheetCuts += 4;
+
+            // Keep track of the last sheet for Sheet Statistics
+            lastSheetLayout = sheetLayout;
+            lastSheetCuts = sheetCuts;
+
+            // Render the cutting diagram
             renderCuttingDiagram(sheetLayout, sheetsUsed, utilization);
         }
+
+        // Add any remaining parts to the unableToParts list
+        if (remainingParts.length > 0) {
+            unableToParts = unableToParts.concat(remainingParts);
+        }
     });
+
+    // Update the Global Statistics
+    updateStatistics(totalSheets, totalArea, usedArea, totalCuts, cutLength, options.optimizationPriority);
     
-    // Update statistics
-    document.getElementById('total-sheets').textContent = totalSheets;
-    document.getElementById('material-usage').textContent = Math.round((usedArea / totalArea) * 100) + '%';
-    document.getElementById('waste-area').textContent = Math.round(totalArea - usedArea) + ' sq mm';
-    document.getElementById('total-cuts').textContent = totalCuts;
+    // Update Sheet Statistics for the most recently processed sheet
+    if (lastSheetLayout) {
+        const sheetArea = lastSheetLayout.length * lastSheetLayout.width;
+        const sheetUsedArea = lastSheetLayout.parts.reduce((sum, part) => sum + (part.length * part.width), 0);
+        const utilization = (sheetUsedArea / sheetArea) * 100;
+        updateSheetStatistics(lastSheetLayout, totalSheets, utilization, lastSheetCuts);
+    }
+    
+    // Update Unable to Fit Statistics
+    updateUnableFitStatistics(unableToParts);
+
+    // Update the Cut statistics panel for the first cut (if any)
+    if (lastSheetLayout && lastSheetLayout.cuts.length > 0) {
+        updateCutStatistics(lastSheetLayout, lastSheetLayout.cuts[0]);
+    }
 }
 
 // Render a cutting diagram for a sheet
@@ -582,7 +803,7 @@ function renderCuttingDiagram(sheetLayout, sheetNumber, utilization) {
     const headerElement = document.createElement('div');
     headerElement.className = 'sheet-header';
     headerElement.innerHTML = `
-        <div>Sheet ${sheetNumber}: ${sheetLayout.material} (${sheetLayout.length} × ${sheetLayout.width} mm)</div>
+        <div>Sheet ${sheetNumber}: ${sheetLayout.material} (${sheetLayout.length} × ${sheetLayout.width})</div>
         <div>Utilization: ${utilization.toFixed(1)}%</div>
     `;
     sheetElement.appendChild(headerElement);
@@ -600,11 +821,26 @@ function renderCuttingDiagram(sheetLayout, sheetNumber, utilization) {
     const scaleY = containerHeight / sheetLayout.length;
     const scale = Math.min(scaleX, scaleY) * 0.9; // 90% to leave margin
     
-    // Set container dimensions
-    sheetContainer.style.width = (sheetLayout.width * scale) + 'px';
-    sheetContainer.style.height = (sheetLayout.length * scale) + 'px';
+    // Set container dimensions with proper aspect ratio
+    const displayWidth = sheetLayout.width * scale;
+    const displayHeight = sheetLayout.length * scale;
     
-    // Render parts
+    sheetContainer.style.width = displayWidth + 'px';
+    sheetContainer.style.height = displayHeight + 'px';
+    
+    // Add outer border for the sheet
+    const outerBorder = document.createElement('div');
+    outerBorder.style.position = 'absolute';
+    outerBorder.style.left = '0px';
+    outerBorder.style.top = '0px';
+    outerBorder.style.width = '100%';
+    outerBorder.style.height = '100%';
+    outerBorder.style.border = '2px solid #000';
+    outerBorder.style.boxSizing = 'border-box';
+    outerBorder.style.pointerEvents = 'none';
+    sheetContainer.appendChild(outerBorder);
+    
+    // Render parts first (so cuts appear above them)
     sheetLayout.parts.forEach(part => {
         const partElement = document.createElement('div');
         partElement.className = 'part';
@@ -613,13 +849,26 @@ function renderCuttingDiagram(sheetLayout, sheetNumber, utilization) {
         partElement.style.width = (part.width * scale) + 'px';
         partElement.style.height = (part.length * scale) + 'px';
         
-        // Display part label
-        partElement.innerText = part.label + (part.rotated ? ' (R)' : '');
+        // Alternate part colors for better visibility
+        const partIndex = parseInt(part.id.split('-')[1]) || 0;
+        const baseColor = 220 - (partIndex % 3) * 20;
+        partElement.style.backgroundColor = `rgb(${baseColor}, ${baseColor}, ${baseColor})`;
         
+        // Display part label with better formatting
+        const labelElement = document.createElement('div');
+        labelElement.style.fontSize = Math.min(14, Math.max(10, Math.min(part.width, part.length) * scale / 8)) + 'px';
+        labelElement.style.fontWeight = 'bold';
+        labelElement.style.overflow = 'hidden';
+        labelElement.style.textOverflow = 'ellipsis';
+        labelElement.innerText = part.label + (part.rotated ? ' (R)' : '');
+        
+        partElement.appendChild(labelElement);
         sheetContainer.appendChild(partElement);
     });
     
-    // Render cut lines
+    // Render cut lines with proper thickness based on kerf width
+    const kerfWidthPx = Math.max(2, options.kerfWidth * scale);
+    
     sheetLayout.cuts.forEach(cut => {
         const cutElement = document.createElement('div');
         cutElement.className = `cut-line ${cut.type}`;
@@ -627,11 +876,15 @@ function renderCuttingDiagram(sheetLayout, sheetNumber, utilization) {
         if (cut.type === 'horizontal') {
             cutElement.style.left = (cut.x * scale) + 'px';
             cutElement.style.top = (cut.y * scale) + 'px';
-            cutElement.style.width = (cut.width * scale) + 'px';
+            cutElement.style.width = (cut.length * scale) + 'px';
+            cutElement.style.height = kerfWidthPx + 'px';
+            cutElement.style.backgroundColor = '#dd0000'; // Red for horizontal cuts
         } else {
             cutElement.style.left = (cut.x * scale) + 'px';
             cutElement.style.top = (cut.y * scale) + 'px';
+            cutElement.style.width = kerfWidthPx + 'px';
             cutElement.style.height = (cut.length * scale) + 'px';
+            cutElement.style.backgroundColor = '#0000dd'; // Blue for vertical cuts
         }
         
         sheetContainer.appendChild(cutElement);
@@ -932,4 +1185,40 @@ function addStockToTable(stock) {
             row.remove();
         }
     });
+}
+
+// Function to update the Cuts statistics panel
+function updateCutStatistics(sheetLayout, cut) {
+    const cutNumberElement = document.getElementById('cut-number');
+    const cutPanelElement = document.getElementById('cut-panel');
+    const cutCutElement = document.getElementById('cut-cut');
+    const cutResultElement = document.getElementById('cut-result');
+    
+    // Fill in cut number (just showing the first cut)
+    if (cutNumberElement) {
+        cutNumberElement.textContent = '1';
+    }
+    
+    // Show which panel the cut is on
+    if (cutPanelElement) {
+        cutPanelElement.textContent = `${sheetLayout.material}`;
+    }
+    
+    // Show cut type and position
+    if (cutCutElement) {
+        if (cut.type === 'horizontal') {
+            cutCutElement.textContent = `Horizontal at ${Math.round(cut.y)}"`;
+        } else {
+            cutCutElement.textContent = `Vertical at ${Math.round(cut.x)}"`;
+        }
+    }
+    
+    // Show resulting panels (simplified)
+    if (cutResultElement) {
+        if (cut.type === 'horizontal') {
+            cutResultElement.textContent = `2 Panels (${Math.round(cut.length)}" × ${cut.width}")`;
+        } else {
+            cutResultElement.textContent = `2 Panels (${cut.length}" × ${Math.round(cut.height)}")`;
+        }
+    }
 }

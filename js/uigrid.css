@@ -1,0 +1,68 @@
+
+.panels-grid .ui-grid-menu {
+    font-size: 13px;
+}
+
+.panels-grid .ui-grid-menu .ui-grid-menu-inner ul li .ui-grid-menu-item {
+    padding: 8px 16px 8px 8px;
+}
+
+/* Adjust ui-grid menu button height */
+.panels-grid .ui-grid-menu-button {
+    padding-left: 4px;
+    height: 29px;
+}
+
+/*!* Disable scrollbars in ui-grid menu *!*/
+.panels-grid .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+    overflow: hidden;
+    overflow-x: hidden;
+    min-height: 150px;
+}
+
+
+.panels-grid .ui-grid,
+.panels-grid .ui-grid-viewport,
+.panels-grid .ui-grid-contents-wrapper,
+.panels-grid .ui-grid-canvas {
+    height: auto !important;
+}
+
+
+.panels-grid .ui-grid-cell-contents {
+    padding: 4px;
+    font-size: 14px;
+}
+
+/* Remove blue shadow */
+.panels-grid .ui-grid-focuser:focus {
+    box-shadow: none !important;
+}
+
+/* Remove focused cell background */
+.panels-grid .ui-grid-cell-focus {
+    background-color: inherit;
+}
+
+/* Remove grid border */
+.panels-grid .ui-grid {
+    border: none !important;
+}
+
+/* Get rid of the ellipsis on grid */
+.panels-grid .ui-grid-icon-blank::before {
+    width: 1em;
+    content: none;
+}
+
+
+
+.projects-grid .ui-grid-pager-panel {
+    background-color: #F3F3F3;
+    border-top: 1px solid #d4d4d4;
+    /*position: relative;*/
+}
+
+/*.projects-grid .ui-grid-viewport {*/
+/*    overflow: scroll;*/
+/*}*/

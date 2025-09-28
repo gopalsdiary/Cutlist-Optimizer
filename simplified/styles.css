@@ -1,0 +1,369 @@
+/* Cutlist Optimizer Simplified - CSS */
+:root {
+    --primary-color: #4A54AD;
+    --primary-light: #eaecff;
+    --primary-dark: #363f8b;
+    --secondary-color: #90A4AE;
+    --secondary-light: #E2F1F6;
+    --background-color: #F5F5F5;
+    --text-color: #333333;
+    --danger-color: #f44336;
+    --success-color: #4CAF50;
+    --border-color: #ddd;
+    --secondary-text: #757575;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* App Container */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: baseline;
+}
+
+.version {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s;
+    background-color: var(--secondary-light);
+    color: var(--primary-dark);
+}
+
+button:hover {
+    background-color: white;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button .material-icons {
+    margin-right: 0.4rem;
+    font-size: 1.2rem;
+}
+
+#calculate-btn {
+    background-color: var(--success-color);
+    color: white;
+}
+
+#calculate-btn:hover {
+    background-color: #3d8b40;
+}
+
+/* Main Content */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.panels {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+}
+
+.panel {
+    background-color: white;
+    border-radius: 4px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.panel h2 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+    color: var(--primary-dark);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.8rem;
+}
+
+.panel h2 .material-icons {
+    margin-right: 0.5rem;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: var(--primary-light);
+}
+
+.action-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-btn, .delete-btn {
+    padding: 0.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    color: var(--primary-color);
+}
+
+.delete-btn {
+    color: var(--danger-color);
+}
+
+/* Statistics */
+.statistics-panel {
+    margin-top: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    background-color: var(--primary-light);
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-dark);
+}
+
+/* Cutting Diagrams */
+#cutting-diagrams {
+    min-height: 400px;
+}
+
+.sheet {
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.sheet-header {
+    background-color: var(--secondary-light);
+    padding: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sheet-container {
+    position: relative;
+    background-color: white;
+    margin: 1rem auto;
+}
+
+.part {
+    position: absolute;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.cut-line {
+    position: absolute;
+    z-index: 10;
+}
+
+.horizontal {
+    height: 2px;
+    background-color: #dd0000;
+}
+
+.vertical {
+    width: 2px;
+    background-color: #0000dd;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--secondary-text);
+    text-align: center;
+}
+
+.empty-state .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close {
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--danger-color);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox input {
+    width: auto;
+    margin-right: 1rem;
+}
+
+.checkbox label {
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .panels {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" ng-app="app">
 <head>
@@ -21,116 +20,59 @@
     <link rel="styleSheet" href="css/uigrid.css"/>
     <link rel="stylesheet" href="css/subscription.css">
     <link rel="styleSheet" href="vendor/material-icons/material-icons.css"/>
-    <link rel="stylesheet" href="vendor/icomoon/style.css"></head>
+    <link rel="stylesheet" href="vendor/icomoon/style.css">
 
-    <!-- Automatically provides/replaces `Promise` if missing or broken. -->
-    <script src="vendor/es6-promise.auto.min.js"></script>
-
-    <script src="vendor/feather-icons/feather.min.js"></script>
-
-    <script src="vendor/chance.min.js"></script>
-
-    <script data-require="jquery@*" data-semver="3.4.1" src="vendor/jquery-3.4.1.min.js"></script>
-    <script src="vendor/jquery-ui.min.js"></script>
-
-    <script src="vendor/angular/angular.min.js"></script>
-    <script src="vendor/angular/angular-sanitize.min.js"></script>
-    <script src="vendor/angular/angular-animate.min.js"></script>
-
-    <script data-require="ui-bootstrap@*" data-semver="0.12.0" src="vendor/ui-bootstrap-tpls-0.12.0.min.js"></script>
-
-    <script src="vendor/angular-toastr/angular-toastr.tpls.min.js"></script>
-
-    <script type="text/javascript" src="vendor/canvg/rgbcolor.min.js"></script>
-    <script type="text/javascript" src="vendor/canvg/stackblur.min.js"></script>
-    <script type="text/javascript" src="vendor/canvg/canvg.min.js"></script>
-
-    <script src="vendor/jsPDF-1.3.2/dist/jspdf.min.js"></script>
-    <script src="vendor/d3/d3.min.js"></script>
-
-    <script src="js/labels/labels-bg.js?v=1.12.1"></script>
-    <script src="js/labels/labels-de.js?v=1.12.1"></script>
-    <script src="js/labels/labels-en.js?v=1.12.1"></script>
-    <script src="js/labels/labels-es.js?v=1.12.1"></script>
-    <script src="js/labels/labels-fa.js?v=1.12.1"></script>
-    <script src="js/labels/labels-fr.js?v=1.12.1"></script>
-    <script src="js/labels/labels-he.js?v=1.12.1"></script>
-    <script src="js/labels/labels-hr.js?v=1.12.1"></script>
-    <script src="js/labels/labels-it.js?v=1.12.1"></script>
-    <script src="js/labels/labels-nl.js?v=1.12.1"></script>
-    <script src="js/labels/labels-pl.js?v=1.12.1"></script>
-    <script src="js/labels/labels-pt.js?v=1.12.1"></script>
-    <script src="js/labels/labels-ru.js?v=1.12.1"></script>
-    <script src="js/labels/labels-ua.js?v=1.12.1"></script>
-    <script src="js/labels/labels-tr.js?v=1.12.1"></script>
-    <script src="js/labels/labels-ja.js?v=1.12.1"></script>
-    <script src="js/labels/labels-zh.js?v=1.12.1"></script>
-
-    <script src="js/app.js?v=1.12.1"></script>
-    <script src="js/auth-service.js?v=1.12.1"></script>
-    <script src="js/auth-controler.js?v=1.12.1"></script>
-    <script src="js/cutlist-configuration.js?v=1.12.1"></script>
-    <script src="js/client-info.js?v=1.12.1"></script>
-    <script src="js/tiling-data.js?v=1.12.1"></script>
-    <script src="js/analytics-service.js?v=1.12.1"></script>
-    <script src="js/app-controler.js?v=1.12.1"></script>
-    <script src="js/clo-utils.js?v=1.12.1"></script>
-    <script src="js/dimension-processor.js?v=1.12.1"></script>
-    <script src="js/utils.js?v=1.12.1"></script>
-    <script src="js/app-config.js?v=1.12.1"></script>
-    <script src="js/cut-list-service.js?v=1.12.1"></script>
-    <script src="js/diagram-service.js?v=1.12.1"></script>
-    <script src="project/project-controler.js?v=1.12.1"></script>
-    <script src="project/project-service.js?v=1.12.1s"></script>
-    <script src="panel-list/panel-list-controler.js?v=1.12.1"></script>
-    <script src="panel-list/panel-list-service.js?v=1.12.1"></script>
-    <script src="js/download.js?v=1.12.1"></script>
-    <script src="js/upload.js?v=1.12.1"></script>
-    <script src="js/csv-handler.js?v=1.12.1"></script>
-    <script src="js/material-service.js?v=1.12.1"></script>
-    <script src="js/pdf-generator.js?v=1.12.1"></script>
-    <script src="js/image-generator.js?v=1.12.1"></script>
-    <script src="js/toast-service.js?v=1.12.1"></script>
-    <script src="js/subscription-service.js?v=1.12.1"></script>
-    <script src="js/permit-period-service.js?v=1.12.1"></script>
-    <script src="js/configuration-properties.js?v=1.12.1"></script>
-    <script src="js/pdf-controler.js?v=1.12.1"></script>
-    <script src="js/mouse-tracker.js?v=1.12.1"></script>
-    <script src="js/stats-controller.js?v=1.12.1"></script>
-    <script src="js/subscription-controller.js?v=1.12.1"></script>
-    <script src="js/billing-details-controller.js?v=1.12.1"></script>
-    <script src="js/billing-details-service.js?v=1.12.1"></script>
-    <script src="js/paypal-service.js?v=1.12.1"></script>
-    <script src="js/stripe-plans.js?v=1.12.1"></script>
-    <script src="js/invoice-controler.js?v=1.12.1"></script>
-
-    <script src="vendor/angular-ui-grid/ui-grid.min.js"></script>
-    <script src="vendor/angular-translate.min.js"></script>
-    <script src="vendor/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script src="vendor/lz-string.min.js"></script>
-
-    <script src="vendor/angular-recaptcha.min.js"></script>
-
-    <!-- Cookie consent -->
-    <link rel="stylesheet" type="text/css" href="vendor/cookieconsent/cookieconsent.min.css" />
-    <a id="cookieconsent:learn_more" aria-label="learn more about cookies" role=button tabindex="0" class="cc-link" href="https://cookie-policy.org/" target="_blank">undefined</a><script>var cookieconsent_ts = 1513437408725; var learnmore2 = document.getElementById("cookieconsent:learn_more");learnmore2.setAttribute("style", "display:none");</script>
-    <script src="vendor/cookieconsent/cookieconsent.min.js"></script>
-
-    <!-- Google Analytics -->
-    <script>
-        if (typeof android === 'undefined') {
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-43643199-9', 'auto');
-            ga('send', 'pageview');
+    <!-- File system integration stylesheet -->
+    <style>
+        .fs-browser {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
         }
-    </script>
-
-    <!-- AdSense -->
-    <!-- <script data-ad-client="ca-pub-8842771397553828" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
+        .fs-browser-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .fs-item {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .fs-item:hover {
+            background-color: #e9e9e9;
+        }
+        .fs-folder {
+            color: #607D8B;
+        }
+        .fs-file {
+            color: #455A64;
+        }
+        .fs-path {
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .fs-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .fs-import-btn {
+            color: #fff;
+            background-color: #90A4AE;
+            border-color: #90A4AE;
+        }
+        .fs-import-btn:hover {
+            background-color: #607D8B;
+        }
+    </style>
 </head>
 
 <body ng-controller="AppCtrl" style="unicode-bidi: plaintext;" ng-click="bodyClicked()">
@@ -357,6 +299,42 @@
                                 <div class="slider round"></div>
                             </label>
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File System Browser Section -->
+            <div id="fs-browser-section">
+                <div class="side-bar-accordion-toggle" ng-click="isFSBrowserCollapsed = !isFSBrowserCollapsed">
+                    <i class="material-icons md-center">folder</i>
+                    <span ng-show="isFSBrowserCollapsed" class="glyphicon glyphicon glyphicon-chevron-right pull-right" style="padding-top: 4px"></span>
+                    <span ng-hide="isFSBrowserCollapsed" class="glyphicon glyphicon glyphicon-chevron-down pull-right" style="padding-top: 4px"></span>
+                    File System
+                </div>
+                <div class="sidebar-section fs-browser" collapse="isFSBrowserCollapsed">
+                    <div class="fs-browser-title">Browse Files</div>
+                    <div class="fs-path" id="current-path">{{ currentFsPath || 'Select a directory' }}</div>
+                    <div id="fs-directory-list" class="fs-directory-list">
+                        <div ng-if="fsError" class="alert alert-danger">
+                            {{ fsError }}
+                        </div>
+                        <div ng-if="fsLoading" class="text-center">
+                            <i class="material-icons md-center spinning">sync</i> Loading...
+                        </div>
+                        <div ng-repeat="item in fsItems" class="fs-item" ng-click="navigateFs(item)">
+                            <i class="material-icons md-center" ng-class="{'fs-folder': item.isDirectory, 'fs-file': !item.isDirectory}">
+                                {{ item.isDirectory ? 'folder' : 'insert_drive_file' }}
+                            </i>
+                            {{ item.name }}
+                        </div>
+                    </div>
+                    <div class="fs-actions">
+                        <button class="btn button-default" ng-click="navigateUpFs()">
+                            <i class="material-icons md-center">arrow_upward</i> Up
+                        </button>
+                        <button class="btn fs-import-btn" ng-click="importFsFile()" ng-disabled="!selectedFsFile">
+                            <i class="material-icons md-center">file_upload</i> Import
+                        </button>
                     </div>
                 </div>
             </div>
@@ -626,10 +604,8 @@
 
 </div>
 
-<div ng-include src="'modal/auth/signin-modal.html'"></div>
-<div ng-include src="'modal/auth/signup-modal.html'"></div>
-<div ng-include src="'modal/auth/reset-password-modal.html'"></div>
-<div ng-include src="'modal/auth/save-password-modal.html'"></div>
+
+
 <div ng-include src="'modal/about-modal.html'"></div>
 <div ng-include src="'modal/stats-modal.html'"></div>
 <div ng-include src="'modal/settings-modal.html'"></div>
@@ -719,28 +695,7 @@
 
                     </div>
 
-                    <small>
-                        <ul ng-if="!isAndroid()" style="color: #455A64; line-height: normal">
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_1' | translate }}</li>
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_APLICABLE' | translate }}</li>
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_FEATURES_DEVICE' | translate }}</li>
-<!--                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_2' | translate }}</li>-->
-    <!--                        <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_3' | translate }}</li>-->
-    <!--                        <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_4' | translate }}</li>-->
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_5' | translate }}</li>
-    <!--                        <li style="padding-top: 10px">{{ 'SUBSCRIPTION_INVOICE' | translate }}-->
-    <!--                            <a ng-href="{{getSubscriptionMailHref()}}">support@cutlistoptimizer.com</a>-->
-    <!--                        </li>-->
-
-                        </ul>
-                        <ul ng-if="isAndroid()" style="color: #455A64; line-height: normal">
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_ADDITINAL_MSG_1' | translate }}</li>
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_APLICABLE' | translate }}</li>
-                            <li style="padding-top: 10px">{{ 'SUBSCRIPTION_FEATURES_DEVICE' | translate }}</li>
-                            <li style="padding-top: 10px">You may cancel your subscription at anytime and you may continue using the service until your billing period ends</li>
-                        </ul>
-                    </small>
-
+                    <
                 </div>
                 <div ng-show="activeSection === 1">
                     <div>Unlimited calculations and premium features during 3 days unlocked by a</div>

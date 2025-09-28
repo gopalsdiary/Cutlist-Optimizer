@@ -1,4 +1,4 @@
-app.controller('AppCtrl', function(ProjectService, TilingService, TilingData, DrawService, DimensionProcessor, ClientInfo, $window, $scope, $location, $http, $timeout, $q, $translate, $interval, $anchorScroll, uiGridConstants, ToastService, AnalyticsService, fileReader, $compile, CsvHandler, MaterialService, PdfGenerator, ImageGenerator, CutListCfg, AuthService, ProjectService, PanelListService, SubscriptionService, PermitPeriodService, ConfigurationProperties, $filter) {
+app.controller('AppCtrl', function(ProjectService, TilingService, TilingData, DrawService, DimensionProcessor, ClientInfo, $window, $scope, $location, $http, $timeout, $q, $translate, $interval, $anchorScroll, uiGridConstants, ToastService, AnalyticsService, fileReader, $compile, CsvHandler, MaterialService, PdfGenerator, ImageGenerator, CutListCfg, AuthService, ProjectService, PanelListService, SubscriptionService, PermitPeriodService, ConfigurationProperties, $filter, FileSystemService) {
 
     const self = this;
     
@@ -20,6 +20,163 @@ app.controller('AppCtrl', function(ProjectService, TilingService, TilingData, Dr
     $scope.configurationProperties = ConfigurationProperties;
     $scope.pdfGenerator = PdfGenerator;
     $scope.window = $window;
+
+    // File System Browser
+    $scope.isFSBrowserCollapsed = true;
+    $scope.fsItems = [];
+    $scope.currentFsPath = '';
+    $scope.fsLoading = false;
+    $scope.fsError = null;
+    $scope.selectedFsFile = null;
+    $scope.currentFsDirectory = null;
+
+    // Initialize file system browser
+    $scope.initializeFileSystem = function() {
+        if (FileSystemService.isSupported()) {
+            $scope.fsError = null;
+        } else {
+            $scope.fsError = 'File System access is not supported in this browser. Try using a modern Chromium-based browser.';
+        }
+    };
+
+    // Navigate to a directory or select a file
+    $scope.navigateFs = function(item) {
+        if (item.isDirectory) {
+            $scope.fsLoading = true;
+            $scope.fsError = null;
+            FileSystemService.listDirectory(item.handle)
+                .then(function(entries) {
+                    $scope.fsItems = entries;
+                    $scope.currentFsPath = $scope.currentFsPath + '/' + item.name;
+                    $scope.currentFsDirectory = item.handle;
+                    $scope.selectedFsFile = null;
+                })
+                .catch(function(error) {
+                    $scope.fsError = error;
+                })
+                .finally(function() {
+                    $scope.fsLoading = false;
+                });
+        } else {
+            // Select a file
+            $scope.selectedFsFile = item;
+        }
+    };
+
+    // Navigate up one directory level
+    $scope.navigateUpFs = function() {
+        if (!$scope.currentFsDirectory) {
+            // Open directory picker if no directory is selected
+            $scope.openDirectoryPicker();
+            return;
+        }
+
+        // Get parent directory if it exists
+        if ($scope.currentFsPath.includes('/')) {
+            var pathParts = $scope.currentFsPath.split('/');
+            pathParts.pop(); // Remove last part
+            $scope.currentFsPath = pathParts.join('/');
+            
+            // Try to get parent
+            $scope.fsLoading = true;
+            if ($scope.currentFsDirectory.getParent) {
+                $scope.currentFsDirectory.getParent()
+                    .then(function(parentHandle) {
+                        return FileSystemService.listDirectory(parentHandle);
+                    })
+                    .then(function(entries) {
+                        $scope.fsItems = entries;
+                        $scope.currentFsDirectory = $scope.fsItems.find(function(item) {
+                            return item.isDirectory && item.name === pathParts[pathParts.length - 1];
+                        });
+                    })
+                    .catch(function(error) {
+                        $scope.fsError = error;
+                        // Try to re-open directory picker as fallback
+                        $scope.openDirectoryPicker();
+                    })
+                    .finally(function() {
+                        $scope.fsLoading = false;
+                    });
+            } else {
+                // If no getParent method, just reopen picker
+                $scope.openDirectoryPicker();
+            }
+        } else {
+            $scope.openDirectoryPicker();
+        }
+    };
+
+    // Open directory picker dialog
+    $scope.openDirectoryPicker = function() {
+        $scope.fsLoading = true;
+        $scope.fsError = null;
+        
+        FileSystemService.openDirectoryPicker()
+            .then(function(result) {
+                $scope.currentFsPath = result.path;
+                $scope.currentFsDirectory = result.handle;
+                return FileSystemService.listDirectory(result.handle);
+            })
+            .then(function(entries) {
+                $scope.fsItems = entries;
+                $scope.selectedFsFile = null;
+            })
+            .catch(function(error) {
+                $scope.fsError = error;
+            })
+            .finally(function() {
+                $scope.fsLoading = false;
+            });
+    };
+
+    // Import selected file
+    $scope.importFsFile = function() {
+        if (!$scope.selectedFsFile) {
+            ToastService.error('No file selected. Please select a file to import.');
+            return;
+        }
+
+        $scope.fsLoading = true;
+        $scope.fsError = null;
+        
+        // Check if file is a supported format (CSV)
+        var fileName = $scope.selectedFsFile.name.toLowerCase();
+        
+        if (fileName.endsWith('.csv')) {
+            FileSystemService.readFileAsText($scope.selectedFsFile.handle)
+                .then(function(content) {
+                    return FileSystemService.parseCsvToPanels(content);
+                })
+                .then(function(panels) {
+                    if (panels.length > 0) {
+                        // Import panels
+                        $scope.tiles = panels;
+                        DimensionProcessor.sanitizePanelListDimensions($scope.tiles);
+                        ToastService.success('Imported ' + panels.length + ' panels successfully.');
+                        $scope.currentProject.isDirty = true;
+                    } else {
+                        ToastService.warning('No valid panel data found in the CSV file.');
+                    }
+                })
+                .catch(function(error) {
+                    $scope.fsError = error;
+                    ToastService.error('Failed to import CSV: ' + error);
+                })
+                .finally(function() {
+                    $scope.fsLoading = false;
+                });
+        } else {
+            $scope.fsError = 'Unsupported file format. Please select a CSV file.';
+            $scope.fsLoading = false;
+            ToastService.error('Unsupported file format. Only CSV files are supported.');
+        }
+    };
+
+    // Initialize file system on controller load
+    $timeout(function() {
+        $scope.initializeFileSystem();
+    });
 
     // <editor-fold defaultstate="collapsed" desc="Current project">
     try {
